@@ -1,0 +1,269 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "clickup-aprovado",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -240,
+        -64
+      ],
+      "id": "7ead81eb-9469-4b3f-978e-ad656d5c9707",
+      "name": "Webhook",
+      "webhookId": "499a79d7-f631-43da-ab05-9cef19e95feb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "132e1075-1a8a-4e4d-a5b6-0316f1f9c465",
+              "leftValue": "={{ $json.body.status }}",
+              "rightValue": "aprovado",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        -64
+      ],
+      "id": "6f73d5e2-87b5-4291-a0ef-af8121237cde",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        128
+      ],
+      "id": "fbde4d19-5270-4d1c-885d-d6d60efbcfca",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "V9O0tyd6KvW5vbXq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você é um especialista em marketing digital para Instagram.\n\nReceberá uma legenda de postagem.\n\nSua tarefa é gerar 10 hashtags relevantes.\n\nRetorne apenas as hashtags em uma única linha.\n\nNome:{{ $json.body.nome }}\nDescrição:{{ $json.body.descricao }}\nLegenda:{{ $json.body.legenda }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        -96
+      ],
+      "id": "fc354b36-d23d-4335-95aa-6d37a4dccb9a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1RE5DUqfv-CUAo398dXx7u58o7CQJHzShlbeQEmBGHyM",
+          "mode": "list",
+          "cachedResultName": "Posts_Aprovados_BrioLab",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RE5DUqfv-CUAo398dXx7u58o7CQJHzShlbeQEmBGHyM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RE5DUqfv-CUAo398dXx7u58o7CQJHzShlbeQEmBGHyM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "hashtag": "={{ $json.output }}",
+            "nome": "={{ $('If').item.json.body.nome }}",
+            "descricao": "={{ $('If').item.json.body.descricao }}",
+            "legenda": "={{ $('If').item.json.body.legenda }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "descricao",
+              "displayName": "descricao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "legenda",
+              "displayName": "legenda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hashtag",
+              "displayName": "hashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        -80
+      ],
+      "id": "014e2d1c-07be-48ea-985c-f1a4f2522367",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9zrGTmlDBchRmkSt",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "williampedrolobourscheid@gmail.com",
+        "subject": "Post aprovado processado",
+        "emailType": "text",
+        "message": "=O conteúdo foi processado com sucesso.  \nNome: {{ $json.nome }}  \nHashtags geradas: {{ $json.hashtag }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        -80
+      ],
+      "id": "de28c76a-05a6-45e8-9bc3-70ffb2e1459e",
+      "name": "Send a message",
+      "webhookId": "fe125f20-ddc1-4b56-8c70-167945010066",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zlPxG2Z2TwQYgjnQ",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2eb587f0-5ab7-4895-8288-ca9b6f370e07",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "02e9d51b4c64a1e6eb132327400731ddd73532ec49a62bde69b6bd16b8f603e6"
+  },
+  "nodeGroups": [],
+  "id": "4rCqwrk34CcMs5x7",
+  "tags": []
+}
