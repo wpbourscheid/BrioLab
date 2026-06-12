@@ -32,7 +32,7 @@ Quando uma tarefa possui status "aprovado", o fluxo:
 
 ## Fluxo Implementado
 
-Webhook → IF → AI Agent (Gemini) → Google Sheets → Notificação
+Webhook → IF → AI Agent (Gemini) → Google Sheets → Gmail
 
 ---
 
@@ -80,12 +80,22 @@ Prompt utilizado:
 
 ## Persistência
 
-Os dados processados são armazenados em uma planilha Google Sheets contendo:
+Os dados processados são armazenados em uma planilha Google Sheets através do nó "Append Row in Sheet". Cada execução gera um novo registro contendo o nome da tarefa, descrição, legenda original e hashtags produzidas pela IA:
 
 * Nome
 * Descrição
 * Legenda
 * Hashtags geradas
+
+---
+
+## Notificação
+
+Após a persistência dos dados, o workflow envia automaticamente um e-mail utilizando a integração com Gmail.
+
+Para fins de teste e validação do fluxo, o destinatário configurado foi o próprio desenvolvedor.
+
+Em um ambiente de produção, o destinatário poderia ser um membro da equipe de conteúdo, comercial ou operação.
 
 ---
 
