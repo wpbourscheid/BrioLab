@@ -1,5 +1,5 @@
 {
-  "name": "My workflow",
+  "name": "workflow",
   "nodes": [
     {
       "parameters": {
@@ -252,7 +252,7 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
