@@ -5,11 +5,11 @@ from clickup import create_task
 
 def main():
     lead = {
-        "nome": "Maria Silva",
-        "telefone": "(53) 99999-1234",
+        "nome": "Maria Carla",
+        "telefone": "(53) 99999-1324",
         "email": "MARIA@EMAIL.COM",
-        "especialidade": "Odontologia",
-        "principal_desafio": "Atrair mais pacientes"
+        "especialidade": "Advocacia",
+        "principal_desafio": "Atrair mais clientes direito do consumidor"
     }
 
     try:
@@ -31,8 +31,8 @@ def main():
         result = create_task(lead)
 
         print(
-            f"Tarefa criada com sucesso: "
-            f"{result['task_id']}"
+            f"Tarefa criada com sucesso! "
+            f"ID: {result['id']}"
         )
 
     except ValueError as e:

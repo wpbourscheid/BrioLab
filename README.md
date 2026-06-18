@@ -367,17 +367,15 @@ Resultado obtido:
 
 Com mais tempo, eu implementaria:
 
-* Integração real com a API do ClickUp
+✅ Integração real com a API do ClickUp
 * Persistência em Supabase ou PostgreSQL
-* Variáveis de ambiente para credenciais
+✅ Variáveis de ambiente para credenciais
 * Logs estruturados
 * Testes automatizados com pytest
 * API REST utilizando FastAPI
 * Tratamento avançado de falhas externas
 
 ---
-
-## Considerações Finais
 
 ## Considerações Finais
 

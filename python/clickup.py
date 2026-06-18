@@ -1,10 +1,20 @@
 import json
+import requests
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-def create_task(lead: dict) -> dict:
-    """
-    Simula a criação de uma tarefa no ClickUp.
-    """
+CLICKUP_TOKEN = os.getenv("CLICKUP_TOKEN")
+LIST_ID = os.getenv("CLICKUP_LIST_ID")
+
+def create_task(lead: dict):
+    url = f"https://api.clickup.com/api/v2/list/{LIST_ID}/task"
+
+    headers = {
+        "Authorization": CLICKUP_TOKEN,
+        "Content-Type": "application/json"
+    }
 
     payload = {
         "name": f"Lead - {lead['nome']}",
@@ -13,16 +23,15 @@ def create_task(lead: dict) -> dict:
             f"Principal desafio: {lead['principal_desafio']}\n"
             f"Telefone: {lead['telefone']}\n"
             f"E-mail: {lead['email']}"
-        ),
-        "status": "novo_lead",
-        "assignee": "comercial"
+        )
     }
 
-    print("\n=== PAYLOAD CLICKUP ===")
-    print(json.dumps(payload, indent=4, ensure_ascii=False))
+    response = requests.post(
+        url,
+        json=payload,
+        headers=headers
+    )
 
-    return {
-        "success": True,
-        "task_id": "CLP-001",
-        "payload": payload
-    }
+    response.raise_for_status()
+
+    return response.json()
